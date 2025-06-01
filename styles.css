@@ -174,3 +174,26 @@ main {
 .checkout-button:hover {
   background-color: #7c5a3a;
 }
+
+#category-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.category-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #a07f55;
+  background-color: #e8d6b3;
+  color: #4e3d30;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+}
+
+.category-button.active {
+  background-color: #b2956a;
+  color: white;
+}
