@@ -3,10 +3,15 @@ const searchInput = document.getElementById('search-input');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const pageInfo = document.getElementById('page-info');
+const categoryContainer = document.getElementById('category-container');
+
 
 let allProducts = []; // all products from the API
 let currentPage = 1; // Current page number
 const productsPerPage = 8; // Products to display per page
+let categories = []; // List of categories - NEW
+let selectedCategory = 'all'; // Selected category - NEW
+
 
 // Fetch products from the DummyJSON API
 async function loadProducts() {
@@ -15,13 +20,38 @@ async function loadProducts() {
     const data = await response.json(); // Convert response to JSON
     allProducts = data.products; // Save products to a variable
     displayProducts(); // Show products on the page
+    getCategories(); // Generate categories - NEW
+
   } catch (error) {
     console.error('Error fetching products:', error); // Handle any errors
   }
 }
+// Extract unique categories from product list - NEW
+function getCategories() {
+  const allCats = new Set(allProducts.map(p => p.category)); // Get all unique categories
+  categories = ['all', ...allCats]; // Include 'all' as default
+  renderCategoryButtons(); // Display buttons
+}
 
-// Call loadProducts when page loads
-loadProducts();
+// Render buttons for each category - NEW
+function renderCategoryButtons() {
+  categoryContainer.innerHTML = ''; // Clear previous buttons
+  categories.forEach(cat => {
+    const btn = document.createElement('button'); // Create button
+    btn.textContent = cat.toUpperCase(); // Button label
+    btn.className = 'category-button'; // Button style
+    if (cat === selectedCategory) btn.classList.add('active'); // Highlight selected - NEW
+
+    btn.addEventListener('click', () => { // On click handler - NEW
+      selectedCategory = cat; // Update selected category
+      currentPage = 1; // Reset page
+      displayProducts(); // Refresh products
+    });
+
+    categoryContainer.appendChild(btn); // Add to container
+  });
+}
+
 
 // Display products based on currentPage and search query
 function displayProducts() {
@@ -76,6 +106,8 @@ function displayProducts() {
   pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
   prevBtn.disabled = currentPage === 1;
   nextBtn.disabled = currentPage === totalPages;
+
+    renderCategoryButtons();
 }
 
 searchInput.addEventListener('input', () => {
@@ -140,3 +172,6 @@ function updateCart() {
 
   totalPriceElement.textContent = total.toFixed(2); // Update total price
 }
+
+// Call loadProducts when page loads
+loadProducts();
