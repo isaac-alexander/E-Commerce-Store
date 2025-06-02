@@ -9,8 +9,8 @@ const categoryContainer = document.getElementById('category-container');
 let allProducts = []; // all products from the API
 let currentPage = 1; // Current page number
 const productsPerPage = 8; // Products to display per page
-let categories = []; // List of categories - NEW
-let selectedCategory = 'all'; // Selected category - NEW
+let categories = []; // List of categories 
+let selectedCategory = 'all'; // Selected category
 
 
 // Fetch products from the DummyJSON API
@@ -20,20 +20,20 @@ async function loadProducts() {
     const data = await response.json(); // Convert response to JSON
     allProducts = data.products; // Save products to a variable
     displayProducts(); // Show products on the page
-    getCategories(); // Generate categories - NEW
+    getCategories(); // Generate categories 
 
   } catch (error) {
     console.error('Error fetching products:', error); // Handle any errors
   }
 }
-// Extract unique categories from product list - NEW
+// Extract unique categories from product list
 function getCategories() {
   const allCats = new Set(allProducts.map(p => p.category)); // Get all unique categories
   categories = ['all', ...allCats]; // Include 'all' as default
   renderCategoryButtons(); // Display buttons
 }
 
-// Render buttons for each category - NEW
+// Render buttons for each category
 function renderCategoryButtons() {
   categoryContainer.innerHTML = ''; // Clear previous buttons
   categories.forEach(cat => {
@@ -42,7 +42,7 @@ function renderCategoryButtons() {
     btn.className = 'category-button'; // Button style
     if (cat === selectedCategory) btn.classList.add('active'); // Highlight selected - NEW
 
-    btn.addEventListener('click', () => { // On click handler - NEW
+    btn.addEventListener('click', () => { 
       selectedCategory = cat; // Update selected category
       currentPage = 1; // Reset page
       displayProducts(); // Refresh products
@@ -55,10 +55,17 @@ function renderCategoryButtons() {
 
 // Display products based on currentPage and search query
 function displayProducts() {
+  let filtered = allProducts; // Displays all products 
+
   const searchTerm = searchInput.value.toLowerCase(); // Get search term in lowercase
-  const filtered = allProducts.filter(product =>
-    product.title.toLowerCase().includes(searchTerm)
-  ); // Filter products by title
+  if (selectedCategory !== 'all') { // Filter by category if it's not 'all' 
+    filtered = filtered.filter(p => p.category === selectedCategory);
+  }
+  if (searchTerm) { // Filter by search term
+    filtered = filtered.filter(p =>
+      p.title.toLowerCase().includes(searchTerm)
+    );
+  }
 
   // Calculate how many pages we need in total
   const totalPages = Math.ceil(filtered.length / productsPerPage);
@@ -104,22 +111,25 @@ function displayProducts() {
   });
 
   pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-  prevBtn.disabled = currentPage === 1;
-  nextBtn.disabled = currentPage === totalPages;
+  prevBtn.disabled = currentPage === 1; // disables previous button if first
+  nextBtn.disabled = currentPage === totalPages; // Disables next if last
 
-    renderCategoryButtons();
+  renderCategoryButtons();
 }
 
+// Search input event
 searchInput.addEventListener('input', () => {
   currentPage = 1; // Reset to page 1 on new search
   displayProducts();
 });
 
+// Pagination previous
 prevBtn.addEventListener('click', () => {
   currentPage--;
   displayProducts();
 });
 
+// Pagination next
 nextBtn.addEventListener('click', () => {
   currentPage++;
   displayProducts();
@@ -156,18 +166,18 @@ function removeFromCart(productId) {
 function updateCart() {
   cartList.innerHTML = ''; // Clear list
 
-  let total = 0;
+  let total = 0; // Resets total
 
   cart.forEach(item => {
-    total += item.price * item.quantity;
+    total += item.price * item.quantity; //Calculate total
 
-    const li = document.createElement('li');
+    const li = document.createElement('li'); //List items
     li.innerHTML = `
       ${item.title} x${item.quantity}
       <button onclick="removeFromCart(${item.id})">🗑</button>
     `;
 
-    cartList.appendChild(li);
+    cartList.appendChild(li); // Add to cart list
   });
 
   totalPriceElement.textContent = total.toFixed(2); // Update total price
