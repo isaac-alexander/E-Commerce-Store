@@ -14,7 +14,7 @@ let selectedCategory = 'all'; // Selected category
 
 
 // Fetch products from the DummyJSON API
-async function loadProducts() {
+const loadProducts = async () => {
   try {
     const response = await fetch('https://dummyjson.com/products?limit=100'); // Get data from API
     const data = await response.json(); // Convert response to JSON
@@ -27,14 +27,14 @@ async function loadProducts() {
   }
 }
 // Extract unique categories from product list
-function getCategories() {
+const getCategories = () => {
   const allCats = new Set(allProducts.map(p => p.category)); // Get all unique categories
   categories = ['all', ...allCats]; // Include 'all' as default
   renderCategoryButtons(); // Display buttons
 }
 
 // Render buttons for each category
-function renderCategoryButtons() {
+const renderCategoryButtons = () => {
   categoryContainer.innerHTML = ''; // Clear previous buttons
   categories.forEach(cat => {
     const btn = document.createElement('button'); // Create button
@@ -42,7 +42,7 @@ function renderCategoryButtons() {
     btn.className = 'category-button'; // Button style
     if (cat === selectedCategory) btn.classList.add('active'); // Highlight selected - NEW
 
-    btn.addEventListener('click', () => { 
+    btn.addEventListener('click', () => {
       selectedCategory = cat; // Update selected category
       currentPage = 1; // Reset page
       displayProducts(); // Refresh products
@@ -54,7 +54,7 @@ function renderCategoryButtons() {
 
 
 // Display products based on currentPage and search query
-function displayProducts() {
+const displayProducts = () => {
   let filtered = allProducts; // Displays all products 
 
   const searchTerm = searchInput.value.toLowerCase(); // Get search term in lowercase
@@ -143,7 +143,7 @@ const cartList = document.getElementById('cart-items');
 const totalPriceElement = document.getElementById('total-price');
 
 // Function to add a product to the cart
-function addToCart(productId) {
+const addToCart = (productId) => {
   const product = allProducts.find(p => p.id === productId); // Find product by ID
   const itemInCart = cart.find(item => item.id === productId);
 
@@ -157,13 +157,13 @@ function addToCart(productId) {
 }
 
 // Function to remove a product from the cart
-function removeFromCart(productId) {
+const removeFromCart = (productId) => {
   cart = cart.filter(item => item.id !== productId); // Remove item
   updateCart();
 }
 
 // Function to update cart display and total
-function updateCart() {
+const updateCart = () => {
   cartList.innerHTML = ''; // Clear list
 
   let total = 0; // Resets total
